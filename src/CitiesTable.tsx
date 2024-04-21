@@ -3,20 +3,16 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
-
-interface City {
-  name: string;
-  country: string;
-  timezone: string;
-  [key: string]: string;
-}
+import { City } from './City';
+import { Link } from 'react-router-dom';
 
 interface CitiesTableProps {
+  cities2: City[]; // Add cities prop
   onCityClick: (cityName: string) => void;
 }
 
-const CitiesTable: React.FC<CitiesTableProps> = ({ onCityClick }) => {
-  const [cities, setCities] = useState<City[]>([]);
+const CitiesTable: React.FC<CitiesTableProps> = ({ cities2, onCityClick }) => {
+  const [cities, setCities] = useState<City[]>([]); 
   const [filteredCities, setFilteredCities] = useState<City[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [suggestions, setSuggestions] = useState<City[]>([]);
@@ -130,6 +126,10 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ onCityClick }) => {
     return faSort;
   };
 
+  const handleRightClick = (cityName: string) => {
+    window.open(`https://your-weather-page-url/${cityName}`, '_blank');
+  };
+
   return (
     <Container>
       <SearchInput
@@ -172,6 +172,10 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ onCityClick }) => {
             <TableRow
               key={city.name + index} // Use a unique key
               onClick={() => handleClick(city.name)}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                window.open(`/weather/${city.name}`, '_blank');
+              }}
               ref={index === filteredCities.length - 1 ? lastCityRef : null}
             >
               <TableCell>{city.name}</TableCell>
